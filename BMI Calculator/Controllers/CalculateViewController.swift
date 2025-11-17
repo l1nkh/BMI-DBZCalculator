@@ -18,6 +18,12 @@ class CalculateViewController: UIViewController {
     @IBOutlet weak var heightLabel: UILabel!
     @IBOutlet weak var weightLabel: UILabel!
     
+    // Variables
+    var bmi: Float?;
+    
+    // Init CalculatorLogic Object
+    var calculatorLogic = CalculatorLogic()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -33,18 +39,16 @@ class CalculateViewController: UIViewController {
         }
     }
     
-    func calulateBMI(height: Float, weight: Float) -> Float{
-        return weight / (height * height)
+    @IBAction func calculatePressed(_ sender: UIButton) {
+        calculatorLogic.calculateBMI(height: heightSlider.value, weight: weightSlider.value)
+        self.performSegue(withIdentifier: "openResult", sender: self)
     }
     
-    @IBAction func calculatePressed(_ sender: UIButton) {
-        let bmi: Float = calulateBMI(height: heightSlider.value, weight: weightSlider.value)
-        print(bmi)
-        
-        let secondVC = SecondViewController();
-        secondVC.bmiValue = bmi;
-        
-        
-        self.present(secondVC, animated: true, completion: nil)
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "openResult" {
+            if let destinationVC = segue.destination as? ResultViewController {
+                destinationVC.bmi = calculatorLogic.getBMI()
+            }
+        }
     }
 }
